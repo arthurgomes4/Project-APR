@@ -59,7 +59,7 @@
     </link>
 
     <gazebo reference="${name}">
-        <material>Gazebo/White</material>
+        <material>Gazebo/Grey</material>
 
         <!-- friction coeff along the friction axis -->
         <mu1>0.0</mu1>

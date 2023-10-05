@@ -1,0 +1,154 @@
+<?xml version="1.0" ?>
+
+<robot name="robot" xmlns:xacro="http://www.ros.org/wiki/xacro">
+
+    <!-- <link name="base_link"/>
+
+    <joint name="base_link_to_chassis" type="fixed">
+        <parent link="base_link"/>
+        <child link="chassis"/>
+        <origin rpy="0 0 -0.785"/>
+    </joint> -->
+
+    <link name="chassis">
+        <visual>
+            <geometry>
+                <mesh filename="package://project_apr_pkg/meshes/chassis.STL" scale="0.001 0.001 0.001"/>
+            </geometry>
+        </visual>
+
+        <inertial>
+            <mass value="0.2"/>
+            <inertia  ixx="0.0007483" ixy="0" ixz="0" iyy="0.0007483" iyz="0" izz="0.0013333" />
+        </inertial>
+    </link>
+
+    <joint name="chassis_to_lidar" type="fixed">
+        <parent link="chassis"/>
+        <child link="lidar"/>
+        <origin xyz="0 0 0.06"/>
+    </joint>
+
+    <link name="lidar">
+        <visual>
+            <origin xyz="0 0 -0.03"/>
+            <geometry>
+                <mesh filename="package://project_apr_pkg/meshes/slam_tec_lidar.STL" scale="0.001 0.001 0.001"/>
+            </geometry>
+        </visual>
+
+        <inertial>
+            <mass value="0.01"/>
+            <inertia ixx="0.00001" ixy="0" ixz="0" iyy="0.00001" iyz="0" izz="0.00001" />
+        </inertial>
+    </link>
+
+    <gazebo reference="lidar">
+        <material>Gazebo/Grey</material>
+    </gazebo>
+    <gazebo reference="chassis">
+        <material>Gazebo/Turquoise</material>
+    </gazebo>
+
+    <xacro:include filename="$(find project_apr_pkg)/model/omni_58mm.xacro"/>
+
+<!-- def = -0.785, 0.785, 2.356, 3.926 -->
+    <xacro:omni_wheel_58mm name="wheel1" parent_link="chassis" 
+                            xyz=" 0.1  0.1 0" driving_angle="2.356" 
+                            effort_limit="10" speed_limit="50" reduction="1"/>
+
+    <xacro:omni_wheel_58mm name="wheel2" parent_link="chassis" 
+                            xyz="-0.1  0.1 0" driving_angle="0.785" 
+                            effort_limit="10" speed_limit="50" reduction="1"/> 
+
+    <xacro:omni_wheel_58mm name="wheel3" parent_link="chassis" 
+                            xyz="-0.1 -0.1 0" driving_angle=" 2.356" 
+                            effort_limit="10" speed_limit="50" reduction="1"/> 
+
+    <xacro:omni_wheel_58mm name="wheel4" parent_link="chassis" 
+                            xyz=" 0.1 -0.1 0" driving_angle="0.785" 
+                            effort_limit="10" speed_limit="50" reduction="1"/>
+
+    <gazebo reference="lidar">
+        <sensor type="ray" name="head_hokuyo_sensor">
+            <pose>0 0 0.02 0 0 0</pose>
+            <visualize>false</visualize>
+            <update_rate>40</update_rate>
+            <ray>
+                <scan>
+                    <horizontal>
+                        <samples>360</samples>
+                        <resolution>1</resolution>
+                        <!-- default = -3.14 -->
+                        <min_angle>-3.14</min_angle>
+                        <!-- default = 3.14 -->
+                        <max_angle>3.14</max_angle>
+                    </horizontal>
+                </scan>
+                <range>
+                    <!-- default = 0.005 -->
+                    <min>0.1</min>
+                    <max>10.0</max>
+                    <resolution>0.001</resolution>
+                </range>
+            </ray>
+            <plugin name="gazebo_ros_head_hokuyo_controller" filename="libgazebo_ros_laser.so">
+                <topicName>laser_scan</topicName>
+                <frameName>lidar</frameName>
+            </plugin>
+        </sensor>
+    </gazebo>
+
+    <gazebo>
+        <!-- X direction -->
+        <plugin filename="libgazebo_ros_diff_drive.so" name="differential_drive_controller">
+        <alwaysOn>true</alwaysOn>
+        <updateRate>40</updateRate>
+        <leftJoint>wheel2_joint</leftJoint>
+        <rightJoint>wheel4_joint</rightJoint>
+        <wheelSeparation>0.2</wheelSeparation>
+        <wheelDiameter>0.058</wheelDiameter>
+        <torque>0.5</torque>
+        <commandTopic>cmd_vel_x</commandTopic>
+        <odometryTopic>odom</odometryTopic>
+        <odometryFrame>odom</odometryFrame>
+        <robotBaseFrame>chassis</robotBaseFrame>
+
+        <!-- some extra stuff to get rid of the warnings -->
+        <rosDebugLevel>na</rosDebugLevel>
+        <publishWheelTF>false</publishWheelTF>
+        <publishOdomTF>true</publishOdomTF>
+        <publishWheelJointState>false</publishWheelJointState>
+        <wheelAcceleration>0</wheelAcceleration>
+        <wheelTorque>0.5</wheelTorque>
+        <!-- <odometrySource>1</odometrySource> -->
+        <publishTf>1</publishTf>
+        </plugin>
+
+        <!-- Y direction -->
+        <plugin filename="libgazebo_ros_diff_drive.so" name="differential_drive_controller">
+        <alwaysOn>true</alwaysOn>
+        <updateRate>40</updateRate>
+        <leftJoint>wheel3_joint</leftJoint>
+        <rightJoint>wheel1_joint</rightJoint>
+        <wheelSeparation>0.2</wheelSeparation>
+        <wheelDiameter>0.058</wheelDiameter>
+        <torque>0.5</torque>
+        <commandTopic>cmd_vel_y</commandTopic>
+        <odometryTopic>odom</odometryTopic>
+        <odometryFrame>odom</odometryFrame>
+        <robotBaseFrame>chassis</robotBaseFrame>
+
+        <!-- some extra stuff to get rid of the warnings -->
+        <rosDebugLevel>na</rosDebugLevel>
+        <publishWheelTF>false</publishWheelTF>
+        <publishOdomTF>true</publishOdomTF>
+        <publishWheelJointState>false</publishWheelJointState>
+        <wheelAcceleration>0</wheelAcceleration>
+        <wheelTorque>0.5</wheelTorque>
+        <!-- <odometrySource>1</odometrySource> -->
+        <publishTf>1</publishTf>
+        </plugin>
+    </gazebo>
+    
+</robot>

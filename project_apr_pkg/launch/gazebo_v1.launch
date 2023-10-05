@@ -7,16 +7,17 @@
   <arg name="debug" default="false"/>
 
   <include file="$(find gazebo_ros)/launch/empty_world.launch">
-    <!-- <arg name="world_name" value="$(find pkg_techfest_imc)/world/my_world.world"/> -->
+    <arg name="world_name" value="$(find project_apr_pkg)/world/building.world"/>
     <arg name="debug" value="$(arg debug)" />
     <arg name="gui" value="$(arg gui)" />
     <arg name="paused" value="$(arg paused)"/>
     <arg name="use_sim_time" value="$(arg use_sim_time)"/>
     <arg name="headless" value="$(arg headless)"/>
+    <arg name="extra_gazebo_args" value="--verbose"/>
   </include>
 
 <group ns="robot">
-  <param name="robot_description" command="xacro $(find project_apr_pkg)/model/robot.xacro"/>
+  <param name="robot_description" command="xacro $(find project_apr_pkg)/model/robot_v1.xacro"/>
 
   <!-- Load joint controller configurations from YAML file to parameter server -->
   <rosparam file="$(find project_apr_pkg)/params/robot.yaml" command="load"/>
@@ -45,6 +46,8 @@
   <node name="cmd_vel_node" pkg="project_apr_pkg" type="cmd_vel_node.py" output="screen"/>
 
   <node name="odom_node" pkg="project_apr_pkg" type="odom_node.py" output="screen"/>
+
+  <node name="walker" pkg="project_apr_pkg" type="walker.py" output="screen"/>
 
 </group>
 

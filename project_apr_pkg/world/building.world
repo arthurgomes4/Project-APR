@@ -1,0 +1,65 @@
+<?xml version="1.0"?>
+<sdf version="1.4">
+  <world name="default">
+    
+    <include>
+      <uri>model://sun</uri>
+    </include>
+
+    <model name="ground">
+      <pose>0 0 0 0 0 0</pose>
+      <static>true</static>
+      <link name="body">
+        <visual name="visual">
+          <geometry>
+            <box>
+              <size>9 7 0.01</size>
+            </box>
+          </geometry>
+          <material>
+            <script>
+              <uri>./materials/gazebo.material</uri>
+              <name>Gazebo/Wood</name>
+            </script>
+          </material>
+        </visual>
+        <collision name="collision">
+          <geometry>
+            <box>
+              <size>9 7 0.01</size>
+            </box>
+          </geometry>
+        </collision>
+      </link>
+    </model>
+    
+    <model name="floor_plan">
+      <pose>0 0 0.01 0 0 0</pose>
+      <static>true</static>
+      <link name="body">
+        <visual name="visual">
+          <geometry>
+            <mesh>
+            <uri>./meshes/apr_world1_meters.STL</uri>
+            <scale>0.001 0.001 0.001</scale>
+            </mesh>
+          </geometry>
+          <material>
+            <script>
+              <uri>./materials/gazebo.material</uri>
+              <name>Gazebo/PaintedWall</name>
+            </script>
+          </material>
+        </visual>
+        <collision name="collision">
+         <geometry>
+            <mesh>
+            <uri>./meshes/apr_world1_meters.STL</uri>
+            <scale>0.001 0.001 0.001</scale>
+            </mesh>
+         </geometry>
+        </collision>
+      </link>
+    </model>
+  </world>
+</sdf>

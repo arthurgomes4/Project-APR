@@ -55,7 +55,7 @@ wheel4_joint_velocity_controller:
 cmd_vel_topic: /cmd_vel
 
 # the odometry topic
-odom_topic: /odom
+odom_topic: odom
 
 # the command topics for each wheel controller
 wheel_controller_command_topics: [wheel1_joint_velocity_controller/command,
